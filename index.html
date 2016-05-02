@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>React-demo</title>
+	<script src="tools/react.js"></script>
+	<script src="tools/react-dom.js"></script>
+	<script src="tools/browser.min.js"></script>
+	<script src="tools/jquery.min.js"></script>
+</head>
+<body>
+	<div id="example"></div>
+	<script type="text/babel">
+		var RepoList = React.createClass({
+			getInitialState: function() {
+				return {
+					loading: true,
+					error: null,
+					data: null
+				}
+			},
+			componentDidMount() {
+				this.props.promise.then(
+					value => this.setState({loading: false,data: value}),
+					error => this.setState({loading: false,error: error})
+				)
+			},
+			render: function() {
+				if (this.state.loading) {
+					return <span>loading...</span>
+				}
+				else if (this.state.error !== null) {
+					return <span>{this.state.error}</span>
+				}else {
+					var items = this.state.data
+					var repos = []
+					for(var key in items){
+						repos.push(<li key={key}>{items[key]}</li>)
+					}
+					return (<ol>{repos}</ol>)
+				}
+			}
+		});
+		ReactDOM.render(<RepoList promise={$.getJSON('http://localhost:8080')} />,document.querySelector("#example"))
+	</script>
+</body>
+</html>
